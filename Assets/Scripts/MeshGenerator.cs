@@ -10,11 +10,10 @@ namespace GameLogic
 
         public void UpdateMeshes(Vector3[] leftPoints, Vector3[] rightPoints, int subdivisionCount)
         {
-            var filter = _leftCloth.MeshFilter;
-            filter.sharedMesh = GenerateMesh(leftPoints, subdivisionCount, false);
+            _leftCloth.SkinnedMeshRenderer.sharedMesh = GenerateMesh(leftPoints, subdivisionCount, false);
             _leftCloth.SkinnedMeshRenderer.sharedMaterial = _material;
             
-            _rightCloth.MeshFilter.mesh = GenerateMesh(rightPoints, subdivisionCount, true);
+            _rightCloth.SkinnedMeshRenderer.sharedMesh = GenerateMesh(rightPoints, subdivisionCount, true);
             _rightCloth.SkinnedMeshRenderer.sharedMaterial = _material;
         }
 

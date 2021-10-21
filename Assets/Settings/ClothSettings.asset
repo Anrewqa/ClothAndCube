@@ -17,4 +17,4 @@ MonoBehaviour:
   _pathWidth: 3
   _pathControlPointsCount: 10
   _pathSectionVerticalOffsetRandomness: 0.1
-  _pathSectionHorizontalOffsetRandomness: 1.5
+  _pathSectionHorizontalOffsetRandomness: 2

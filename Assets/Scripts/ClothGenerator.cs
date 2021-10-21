@@ -19,11 +19,6 @@ namespace GameLogic
 
         public Vector3[] Path => _midPoints;
 
-        private void Start()
-        {
-            Generate();
-        }
-
         private void Update()
         {
             if (_isGenerate)

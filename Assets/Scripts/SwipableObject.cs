@@ -6,6 +6,7 @@ namespace GameLogic
     public class SwipableObject : MonoBehaviour
     {
         [SerializeField] private SwipeController _swipeController;
+        [SerializeField] private float _maxOffset;
 
         private Rigidbody _rigidbody;
         
@@ -18,7 +19,9 @@ namespace GameLogic
 
         private void OnSwipe(SwipeDirections direction)
         {
-            transform.localPosition += direction == SwipeDirections.Left ? Vector3.left : Vector3.right;
+            var desiredPosition = transform.localPosition + (direction == SwipeDirections.Left ? Vector3.left : Vector3.right);
+            desiredPosition.x = Mathf.Clamp(desiredPosition.x, -_maxOffset, _maxOffset);
+            transform.localPosition = desiredPosition;
         }
     }
 }
