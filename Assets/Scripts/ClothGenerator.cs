@@ -10,8 +10,8 @@ namespace GameLogic
     {
         [SerializeField] private ClothSettings _clothSettings;
         [SerializeField] private MeshGenerator _meshGenerator;
-        [SerializeField] private bool _isGenerate;
         [SerializeField] private int _subdivision;
+        [SerializeField] private bool _isGenerate;
         
         [SerializeField, HideInInspector] private Vector3[] _midPoints;
         [SerializeField, HideInInspector]private Vector3[] _leftPoints;
@@ -31,7 +31,7 @@ namespace GameLogic
             }
         }
 
-        public void Generate()
+        private void Generate()
         {
             _leftPoints = new Vector3[(_clothSettings.PathControlPointsCount + 2) * (2 + _subdivision)];
             _rightPoints = new Vector3[(_clothSettings.PathControlPointsCount + 2) * (2 + _subdivision)];

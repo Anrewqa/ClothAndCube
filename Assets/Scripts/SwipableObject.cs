@@ -1,4 +1,5 @@
-﻿using GameLogic.CustomInput;
+﻿using System;
+using GameLogic.CustomInput;
 using UnityEngine;
 
 namespace GameLogic
@@ -15,6 +16,11 @@ namespace GameLogic
             _rigidbody = GetComponent<Rigidbody>();
             
             _swipeController.Swipe += OnSwipe;
+        }
+
+        private void OnDestroy()
+        {
+            _swipeController.Swipe -= OnSwipe;
         }
 
         private void OnSwipe(SwipeDirections direction)

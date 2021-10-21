@@ -14,6 +14,11 @@ namespace GameLogic
             _pathFollower.PathComplete += OnPathComplete;
         }
 
+        private void OnDestroy()
+        {
+            _pathFollower.PathComplete -= OnPathComplete;
+        }
+
         private void OnPathComplete()
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
