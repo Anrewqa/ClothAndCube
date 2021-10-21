@@ -1,5 +1,4 @@
-﻿using System;
-using GameLogic.CustomInput;
+﻿using GameLogic.CustomInput;
 using UnityEngine;
 
 namespace GameLogic
@@ -9,12 +8,8 @@ namespace GameLogic
         [SerializeField] private SwipeController _swipeController;
         [SerializeField] private float _maxOffset;
 
-        private Rigidbody _rigidbody;
-        
         private void Start()
         {
-            _rigidbody = GetComponent<Rigidbody>();
-            
             _swipeController.Swipe += OnSwipe;
         }
 
