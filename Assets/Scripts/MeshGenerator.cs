@@ -1,69 +1,75 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace GameLogic
 {
     public class MeshGenerator : MonoBehaviour
     {
+        [SerializeField] private ClothObject _leftCloth;
+        [SerializeField] private ClothObject _rightCloth;
         [SerializeField] private Material _material;
 
-        [SerializeField, HideInInspector] private List<GameObject> _spawnedMeshes = new List<GameObject>();
-
-        public void ClearSpawnedMeshes()
+        public void UpdateMeshes(Vector3[] leftPoints, Vector3[] rightPoints, int subdivisionCount)
         {
-            if (_spawnedMeshes.Count > 0)
-            {
-                foreach (var spawnedMesh in _spawnedMeshes)
-                {
-                    DestroyImmediate(spawnedMesh);
-                }
-                
-                _spawnedMeshes.Clear();
-            }
+            var filter = _leftCloth.MeshFilter;
+            filter.sharedMesh = GenerateMesh(leftPoints, subdivisionCount, false);
+            _leftCloth.SkinnedMeshRenderer.sharedMaterial = _material;
+            
+            _rightCloth.MeshFilter.mesh = GenerateMesh(rightPoints, subdivisionCount, true);
+            _rightCloth.SkinnedMeshRenderer.sharedMaterial = _material;
         }
-        
-        
-        public void GenerateMesh(Vector3[] points, int subdivisionLevel, bool isNormalInverted)
+
+        private Mesh GenerateMesh(Vector3[] points, int subdivisionLevel, bool isNormalInverted)
         {
             var mesh = new Mesh();
-            var newObject = new GameObject();
-            _spawnedMeshes.Add(newObject);
 
-            /*if (subdivisionLevel > 1)
+            var segmentLength = 2 + subdivisionLevel;
+            var segmentsCount = points.Length / segmentLength;
+            
+            var uv = new Vector2[points.Length];
+
+            for (int y = 0; y < segmentsCount; y++)
             {
-                var vertices = new Vector3[points.Length + points.Length / 2 * subdivisionLevel];
-
-                for (int i = 0; i < points.Length / 2; i++)
+                var firstPoint = points[y * segmentLength];
+                var lastPoint = points[y * segmentLength + segmentLength - 1];
+                
+                for (int x = 0; x < segmentLength; x++)
                 {
-                    for (int j = 1; j < subdivisionLevel; j++)
-                    {
-                        vertices[i * points.Length / 2 + j] = points[i + 1] - points[i] / j;
-                    }
+                    var point = points[x + y * segmentLength];
+                    var uvX = Vector3.Distance(point, firstPoint) / Vector3.Distance(lastPoint, firstPoint);
+                    
+                    uv[y * segmentLength + x] = new Vector2(uvX, (float) y / segmentsCount);
                 }
-            }      */      
-
-            var xSize = points.Length / 2 - 1;
-            var ySize = subdivisionLevel;
-
-            var triangles = new int[xSize * ySize * 6];
-            for (int i = 0; i < xSize; i++)
-            {
-                var triangleIndex = i * 6;
-                var vertexIndex = i * 2;
-                triangles[triangleIndex] = vertexIndex;
-                triangles[triangleIndex + 3] = triangles[triangleIndex + 2] = 
-                    isNormalInverted ? vertexIndex + 2 : vertexIndex + 1;
-                triangles[triangleIndex + 4] = triangles[triangleIndex + 1] = 
-                    isNormalInverted ? vertexIndex + 1 : vertexIndex + 2;
-                triangles[triangleIndex + 5] = vertexIndex + 3;
             }
-            
-            
+
+            segmentLength--;
+            segmentsCount--;
+
+            var triangles = new int[segmentsCount * segmentLength * 6];
+            for (int ti = 0, vi = 0, y = 0; y <= segmentsCount - 1; y++, vi++)
+            {
+                for (int x = 0; x <= segmentLength - 1; x++, ti += 6, vi++)
+                {
+                    triangles[ti] = vi;
+                    if (isNormalInverted)
+                    {
+                        triangles[ti + 3] = triangles[ti + 2] = vi + segmentLength + 1;
+                        triangles[ti + 4] = triangles[ti + 1] = vi + 1;
+                    }
+                    else
+                    {
+                        triangles[ti + 3] = triangles[ti + 2] = vi + 1;
+                        triangles[ti + 4] = triangles[ti + 1] = vi + segmentLength + 1;
+                    }
+                    triangles[ti + 5] = vi + segmentLength + 2;
+                }
+            }
+
             mesh.vertices = points;
+            mesh.uv = uv;
             mesh.triangles = triangles;
-            
-            newObject.AddComponent<MeshRenderer>().sharedMaterial = _material;
-            newObject.AddComponent<MeshFilter>().mesh = mesh;
+            mesh.RecalculateNormals();
+
+            return mesh;
         }
     }
 }

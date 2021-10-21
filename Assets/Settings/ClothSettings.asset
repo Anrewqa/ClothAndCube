@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38167f99b1a4483aa2f4eb1c89b05d19, type: 3}
   m_Name: ClothSettings
   m_EditorClassIdentifier: 
-  _length: 30
-  _width: 10
+  _length: 40
+  _width: 15
   _pathWidth: 3
-  _pathControlPointsCount: 5
+  _pathControlPointsCount: 10
   _pathSectionVerticalOffsetRandomness: 0.1
   _pathSectionHorizontalOffsetRandomness: 1.5
